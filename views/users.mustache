@@ -5,6 +5,17 @@
     <title></title>
   </head>
   <body>
-
+    {{#users}}
+    <form action="/" method="post">
+      <h1>Login Page</h1>
+      <span>Please Enter Your Username:
+        <input type="text" name="username" placeholder="username" />
+      </span>
+      <span>Please Enter Your Password:
+        <input type="password" name="password" placeholder="password"  />
+      </span>
+      <button type="submit">Submit</button>
+      {{/users}}
+    </form>
   </body>
 </html>
