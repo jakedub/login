@@ -19,68 +19,49 @@ app.set('view engine', 'mustache')
 app.use(session({
   secret: 'keyboard cat',
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie:{}
 }));
 
-//Redirect to login if originalUrl is not "/login/"
-// app.use((req, res, next) => {
-//     if (req.originalUrl === '/') {
-//       next();
-//     }
-//   res.redirect("/login/")
-// });
 
-// NOTE: Not working
-app.use((err, req, res, next) => {
-  if (req.originalUrl === "/"){
+//Checking if user/password present with session
+app.use(function(req, res, next) {
+    req.session.users = {
+        user: "password"
+    };
     next();
-  }
-  res.redirect('/login/');
 });
 
-const list = [
-  {
-    username: "",
-    password: "",
-  }
-];
+//If username/password present then "/" else go to "/login/"
+app.post("/", function(req, res, next) {
+    if (req.session.username) {
+        res.send(`Congratulations! <br/>
+          This is your usesrname: ${req.session.username} <br/>
+          This is your password: ${req.session.password}
+          <img src="http://media1.giphy.com/media/c54YHGDH63jJC/giphy.gif"/>`);
+    } else {
+        res.redirect("/login/")
+    };
+    next();
+});
 
-const data = {
-  users:list
-};
-
+//Using the form from mustache at "/login/"
 app.get('/login/', function (req, res) {
-  res.render("users", data);
+  res.render("users");
 });
 
-// NOTE: Don't need this...I believe
-app.post("/", function(req, res){
-  console.log(req.body);
-  let username = req.body.username;
-  let password = req.body.password;
-  let response = `Here are your credentials for the site: <br/>
-  This is your username: ${username} <br/>
-  This is your password: ${password}`
-  res.send(response);
-});
+//This is wrong. I know it's wrong. Doesn't it need to push? Especially to compare?
 
-app.post("/", function (req, res) {
+let list = [{
+  user: "password"
+}]
+app.post("/login/", function (req, res) {
   console.log(list);
   list.push({username:req.body.username});
   list.push({username:req.body.password});
-  res.redirect('/');
+  res.send('/');
 })
 
 app.listen(3000, function () {
   console.log('Creating login page');
 })
-
-//Left To Do
-//1. User redirect if not logged in. Define log in?
-//2. authentication. Have the redirect with completed information. But need to authenticate.
-//3. Valid usernames/passwords kept as a data structure.
-
-//Using Express, Mustache, and express-session, create an app with a login page. When a user goes to /, and they are not logged in, redirect them to /login/. Upon entering a valid username and password, they should be authenticated and sent back to /. The root page should show that they are logged in and what username they are logged in as.
-
-// The valid usernames and passwords should be kept as a data structure in your application.
