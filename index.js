@@ -21,40 +21,45 @@ app.use(session({
   saveUninitialized: false,
 }));
 
-let data = {
-  "jon": "1234",
-  "jim": "1234"
-};
+let users = {
+      'jon': '1234',
+      'jim': '1234'
+    };
 
-app.get("/", function (req,res){
-let user = {};
-myUser.username = req.session.name
-myUser.password = req.session.password
-console.log(req.session.username);
-if (typeof req.session.username !== undefined){
-  res.render("index", myUser);
-} else {
-  console.log("redirected to login");
-  res.redirect("/login/");
-}
-})
 
-app.get("/login/", function (req,res){
-  res.render("login");
-})
 
-app.post("/login/auth", function(req, res){
-  let name = req.body.username;
-  let password = req.body.password;
-if (users[name] === password){
-  req.session.username = name
-  req.session.password = password
-  res.redirect("/");
-} else {
-  res.redirect("/login/")
-}
+app.get('/', function(req, res){
+  let myUser = {};
+  myUser.username = req.session.username
+  myUser.password = req.session.password
+  if (typeof req.session.username !== 'undefined'){
+    res.render('index', myUser);
+  }
+  else{
+    console.log('redirected to login!');
+    res.redirect('/login');
+  }
 });
 
-app.listen(3000, function(){
-  console.log("Should be working");
+app.get('/login', function(req, res){
+  res.render('login');
+})
+
+app.post('/login/auth', function(req, res){
+  let name = req.body.username;
+  let password = req.body.password;
+  console.log(req.body);
+  if (users[name] === password){
+    req.session.username = name
+    req.session.password = password
+    res.redirect('/');
+  }
+  else{
+    res.redirect('/login');
+    console.log('nope');
+  }
+});
+
+app.listen(3000,function () {
+  console.log('Should be working');
 })
